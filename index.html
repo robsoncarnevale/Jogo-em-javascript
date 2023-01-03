@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="w3-container" >
+        <div class="cenario">
+            <div class="w3-row" style="display: none;" id="menucontador"> 
+                <div class="w3-panel w3-border w3-col m4 painel-detalhes" > 
+                     <center><label for="pontos"> Mortes</label><br>
+                     <input type="text" readonly id="pontos" value="0"></center>
+                 </div>
+                 <div class="w3-panel w3-border w3-col m4 painel-detalhes"> 
+                     <center><label for="sobrenaturais"> Sobrenaturais</label><br>
+                     <input type="text" readonly id="sobrenaturais" value="0"></center>  
+                 </div> 
+                 <div class="w3-panel w3-border w3-col m4 painel-detalhes">
+                     <center><label for="tempo"> Tempo</label><br>
+                     <input type="text" readonly id="tempo" value="0"></center>
+                 </div>
+                 
+             </div>
+             <br>
+             <div id="menujogo">
+                 <div class="w3-row">
+                     <button id="demo" onclick="start()">START</button>
+                 </div>
+                 <div class="w3-row" style="padding: 1% 0;">
+                     <button id="control">CONTROL</button>
+                 </div>
+                 <div class="w3-row">
+                     <button id="credits">CREDITS</button>
+                 </div>
+             </div>
+             
+             <!-- Personagens -->
+             <div class="corvo"></div>
+             <div id="result">
+                <!-- VAMPIRO e Ghost VAI DE 0 A 920, retorno dos sobrenaturais-->
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script>
+    function start() {
+        /* Startar com valor 0. */
+        tempo = 0;
+        pontos = 0;
+        $('#pontos').val(pontos);
+        $('#tempo').val(tempo);
+        $('#result').empty();
+
+        $('#result').append(`<div class="vampiro" data-vida="0" onclick="destruir(this)" style="margin-left:` + getRandomIntInclusive(0, $(window).width()) + `px"></div>`);
+        $('#result').append(`<div class="fantasma" data-vida="0" onclick="destruir(this)" style="margin-top:` + getRandomIntInclusive(0, $(window).height()) + `px; margin-left:` + getRandomIntInclusive(0, $(window).width()) + `px;></div>`);
+         
+        $('#menucontador').show(); 
+        $('#menujogo').hide();  
+        $('.corvo').hide();  
+      
+        let contador = setInterval(() => {
+            tempo++
+            $('#tempo').val(tempo)
+        }, 1000);
+
+        let jogo = setInterval(() => {
+           vamp = 0;
+            if (getRandomIntInclusive(0, 100) == 1) {
+                for (var x = 0; x <= (1 * (tempo / 10)); x++) {
+                    $('#result').append(`<div class="vampiro" data-vida="0" onclick="destruir(this)" style="margin-left:` + getRandomIntInclusive(0, $(window).width()) + `px"></div>`);
+                }
+            }
+            ghost = 0;
+            if (getRandomIntInclusive(0, 100) == 1) {
+                for (var x = 0; x <= (1 * (tempo / 10)); x++) {
+                    $('#result').append(`<div class="fantasma" data-vida="0" onclick="destruir(this)" style="margin-top:` + getRandomIntInclusive(0, $(window).height()) + `px;margin-left:` + getRandomIntInclusive(0, $(window).width()) + `px"></div>`);
+                }
+            }
+
+            $('.fantasma').each(function() {
+                ghost++;
+                $(this).data("vida", $(this).data("vida") + getRandomIntInclusive(0, 1));
+
+                //console.log($(this).data("vida", $(this).data("vida") + getRandomIntInclusive(0, 1)));
+                
+               if ($(this).data("vida") > getRandomIntInclusive(100, 600)) {
+                    $('#result').append(`<div class="fantasma" data-vida="0" onclick="destruir(this)" style="margin-top:` + $(this).css('margin-top') + `;margin-left:` + $(this).css('margin-left') + `"></div>`);
+                    $(this).data("vida", 0)
+                }
+
+                if ($(this).data("fator") > 0) {
+                    $(this).css('margin-top', (parseInt($(this).css('margin-top').replace('px', '')) + getRandomIntInclusive(-3, 5)))
+                    $(this).css('margin-left', (parseInt($(this).css('margin-left').replace('px', '')) + getRandomIntInclusive(-3, 5)))
+                } else {
+                    $(this).css('margin-top', (parseInt($(this).css('margin-top').replace('px', '')) + getRandomIntInclusive(-5, 3)))
+                    $(this).css('margin-left', (parseInt($(this).css('margin-left').replace('px', '')) + getRandomIntInclusive(-5, 3)))
+                } 
+    
+                 /* if (parseInt($(this).css('margin-left').replace('px', '')) < 0) {
+                    $(this).data("fator", 1)
+                    $(this).css('margin-left', 10)
+                }
+
+                if (parseInt($(this).css('margin-top').replace('px', '')) < 0) {
+                    $(this).data("fator", 1)
+                    $(this).css('margin-top', 10)
+                }
+
+                if (parseInt($(this).css('margin-left').replace('px', '')) > $(window).width()) {
+                    $(this).data("fator", -1)
+                    $(this).css('margin-left', $(window).width() - 5)
+                }
+
+                if (parseInt($(this).css('margin-top').replace('px', '')) > ($(window).height() - 10)) {
+                    $(this).data("fator", -1)
+                    $(this).css('margin-top', $(window).height() - 5)
+                }  
+
+                if (parseInt($(this).css('margin-right').replace('px', '')) > $(window).width()) {
+                    $(this).data("fator", -1)
+                    $(this).css('margin-right', $(window).width() - 5)
+                    $(this).css('float','right')
+                }
+
+                if (parseInt($(this).css('margin-bottom').replace('px', '')) > ($(window).height() - 10)) {
+                    $(this).data("fator", -1)
+                    $(this).css('margin-bottom', $(window).height() - 5)
+                    $(this).css('bottom',0)
+                }  */
+                //$("p").last().text("left: " + $(this).css('margin-left') + ", top: " + $(this).css('margin-top'));
+            })
+
+            $('.vampiro').each(function() {
+                vamp++;
+                $(this).data("vida", $(this).data("vida") + getRandomIntInclusive(0, 1));
+
+                if ($(this).data("vida") > getRandomIntInclusive(100, 600)) {
+                    $('#result').append(`<div class="vampiro" data-vida="0" onclick="destruir(this)" style="margin-left:` + $(this).css('margin-left') + `"></div>`);
+                    $(this).data("vida", 0)
+                }
+                if ($(this).data("fator") > 0) {
+                    $(this).css('margin-top', (parseInt($(this).css('margin-top').replace('px', '')) + getRandomIntInclusive(-3, 5)))
+                    $(this).css('margin-left', (parseInt($(this).css('margin-left').replace('px', '')) + getRandomIntInclusive(-3, 5)))
+                } else {
+                    $(this).css('margin-top', (parseInt($(this).css('margin-top').replace('px', '')) + getRandomIntInclusive(-5, 3)))
+                    $(this).css('margin-left', (parseInt($(this).css('margin-left').replace('px', '')) + getRandomIntInclusive(-5, 3)))
+                } 
+            })
+
+            let s = vamp + ghost;
+
+            $('#sobrenaturais').val(s)
+            if (s == 0) {
+                $('#result').empty()
+                $('#menucontador').hide()
+                $('#result').append(`<div class="win"><img src="img/win.png" onclick="restart()"></div>`)
+                clearInterval(jogo);
+                clearInterval(contador);
+            }
+
+
+            p = $('#pontos').val();
+            if (p >= 30) {
+                $('#result').empty()
+                $('#menucontador').hide()
+                $('#result').append(`<div class="level"><img src="img/complete_level.png" onclick="restart()"></div>`)
+                clearInterval(jogo);
+                clearInterval(contador);
+            }
+
+            //quantidade de vampiros e fantasma para perder
+            if (s > 50) {
+                $('#result').empty();
+                $('#menucontador').hide();
+                
+                $('#result').append(`<div class="loser"><img src="img/lose.png" onclick="restart()"> </div>`);
+                clearInterval(jogo);
+                clearInterval(contador);
+            }
+        }, 50);
+    }
+
+    function restart(){
+        $('.loser').hide();
+        $('.win').hide();
+        $('.level').hide();
+        $('#menujogo').show();
+        $('.corvo').show();
+    }
+
+</script>
+
+<script>
+   /*  $(document).keypress(function(event) {
+        console.log(event.keyCode)
+        if (event.keyCode == 97) {
+            $('.cenario').css('margin-left', parseInt($('.cenario').css('margin-left').replace('px', '')) - 10)
+        }
+        if (event.keyCode == 115) {
+            $('.cenario').css('margin-top', parseInt($('.cenario').css('margin-top').replace('px', '')) + 10)
+        }
+        if (event.keyCode == 100) {
+            $('.cenario').css('margin-left', parseInt($('.cenario').css('margin-left').replace('px', '')) + 10)
+        }
+        if (event.keyCode == 119) {
+            $('.cenario').css('margin-top', parseInt($('.cenario').css('margin-top').replace('px', '')) - 10)
+        }
+    }); */
+
+    function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+</script>
+
+<script>
+    function destruir(lol) {
+        lol.remove()
+        //$('.vampiro').css("src","sangue_min.png")
+        $('#pontos').val(parseInt($('#pontos').val()) + 1)
+    }
+</script>
+
+</html>
